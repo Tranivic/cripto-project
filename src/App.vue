@@ -1,28 +1,58 @@
 <template>
+
   <div class="app">
-    <ComponentHeader />
-    <ComponentMain />
+    <!-- ========== Header ========== -->
+    <header class="font-black text-6xl text-stone-400 pt-20 justify-center flex">
+      <h1>THE<strong class="text-stone-800">COIN</strong>APP</h1>
+    </header>
+    <!-- ========== Main ========== -->
+    <main>
+      <form class="pt-10 justify-center flex search-bar h-full" @submit.prevent="HandleSearch">
+        <input placeholder="Search for currency to add..."
+          class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required>
+      </form>
+      <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
+        <CoinCard v-for="coin in this.coinList" :key="coin.asset_id" :coin="coin" :icon="icon" />
+      </ul>
+    </main>
   </div>
+
 </template>
 
 <script>
-import ComponentHeader from "./components/ComponentHeader.vue";
-import ComponentMain from "./components/ComponentMain.vue";
-
-
+import axios from 'axios'
+import CoinCard from "./components/CoinCard.vue";
 
 export default {
   name: "App",
-  components: {
-    ComponentHeader,
-    ComponentMain
-  }
+  data() {
+    return {
+      coinList: [],
+      iconList: [],
+    }
+  },
+
+
+  mounted() {
+    const getCoins = () => {
+      axios.get("https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
+        .then(response => {
+          let myTarget1 = JSON.parse(JSON.stringify(response.data))
+          this.coinList = myTarget1
+        });
+    }
+
+    getCoins()
+
+
+  },
+  components: { CoinCard }
 }
 
 </script>
 
 <style>
-/* The reset css code below */
+/* ================= Reset CSS ================*/
 * {
   margin: 0;
   padding: 0;
@@ -33,5 +63,21 @@ export default {
 
 a {
   text-decoration: none;
+}
+
+/*=============================================*/
+input {
+  transition: 0.2s;
+}
+
+input:focus,
+input:valid {
+  color: #fff;
+  background-color: #313131;
+}
+
+.cards-container {
+  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 </style>
