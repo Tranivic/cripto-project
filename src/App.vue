@@ -12,7 +12,9 @@
           class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required>
       </form>
       <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
-        <CoinCard v-for="coin in this.coinList" :key="coin.asset_id" :coin="coin" :icon="icon" />
+        <template v-for="coin in this.coinList.slice(0, 6)">
+          <CoinCard :key="coin.asset_id" :coin="coin" v-if="isNaN(parseFloat(coin.price_usd).toFixed(4)) == false" />
+        </template>
       </ul>
     </main>
   </div>
@@ -28,7 +30,7 @@ export default {
   data() {
     return {
       coinList: [],
-      iconList: [],
+      iconList: [1,2,3,4]
     }
   },
 
@@ -40,10 +42,18 @@ export default {
           let myTarget1 = JSON.parse(JSON.stringify(response.data))
           this.coinList = myTarget1
         });
+
+    }
+    const getIcons = () => {
+      axios.get("https://rest.coinapi.io/v1/assets/icons/{}/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
+        .then(response => {
+          let myTarget2 = JSON.parse(JSON.stringify(response.data))
+         console.log(myTarget2)
+        });
     }
 
     getCoins()
-
+    setTimeout(getIcons(), 300)
 
   },
   components: { CoinCard }

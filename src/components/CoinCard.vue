@@ -1,5 +1,5 @@
-<template>
-    <div class="CoinCard coin-card py-5 bg-zinc-100 rounded-lg shadow-lg w-60">
+<template >
+    <li class="CoinCard coin-card py-5 bg-zinc-100 rounded-lg shadow-lg w-60">
         <div class="card-top flex justify-center items-center">
             <div class="currency-logo pr-3 rounded-full">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Currency logo">
@@ -10,12 +10,18 @@
         <div class="card-content flex justify-center text-center">
             <h1 class="text-2xl">${{ parseFloat(coin.price_usd).toFixed(4) }}</h1>
         </div>
-    </div>
+    </li>
 </template>
 
 <script>
 export default {
-    props: ['coin', 'icon'],
+    props: ['coin'],
+    data() {
+        return {
+            numero: "oi",
+        }
+    },
+
 }
 </script>
 
