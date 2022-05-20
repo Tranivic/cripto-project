@@ -1,9 +1,6 @@
 <template >
     <li class="CoinCard coin-card py-5 bg-zinc-100 rounded-lg shadow-lg w-60">
         <div class="card-top flex justify-center items-center">
-            <div class="currency-logo pr-3 rounded-full">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Currency logo">
-            </div>
             <h1 class="text-2xl">{{ coin.name }}</h1>
             <h2 class="pl-2 text-stone-400">{{ coin.asset_id }}</h2>
         </div>
@@ -18,7 +15,7 @@ export default {
     props: ['coin'],
     data() {
         return {
-            numero: "oi",
+           
         }
     },
 

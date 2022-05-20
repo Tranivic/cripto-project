@@ -7,13 +7,16 @@
     </header>
     <!-- ========== Main ========== -->
     <main>
-      <form class="pt-10 justify-center flex search-bar h-full" @submit.prevent="HandleSearch">
+      <form class="pt-10 justify-center flex search-bar h-full" @submit.prevent="AddCoin">
         <input placeholder="Search for currency to add..."
-          class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required>
+          class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input">
       </form>
       <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
         <template v-for="coin in this.coinList.slice(0, 6)">
           <CoinCard :key="coin.asset_id" :coin="coin" v-if="isNaN(parseFloat(coin.price_usd).toFixed(4)) == false" />
+        </template>
+        <template v-if="newCoins.value > 0">
+          <li v-for="coin in newCoins.value" :key="coin.name" >{{coin.name}}</li>
         </template>
       </ul>
     </main>
@@ -22,38 +25,49 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import axios from 'axios'
 import CoinCard from "./components/CoinCard.vue";
 
 export default {
   name: "App",
-  data() {
+
+  setup() {
+    const coinList = ref([])
+    const input = ref("")
+    const newCoins = ref([])
+
+    const AddCoin = () => {
+      coinList.value.forEach(element => {
+        if (element.name == input.value) {
+          newCoins.value.push(element)
+          console.log(newCoins.value)
+        }
+
+      })
+    }
+
     return {
-      coinList: [],
-      iconList: [1,2,3,4]
+      AddCoin,
+      input,
+      newCoins,
+      coinList
     }
   },
-
 
   mounted() {
     const getCoins = () => {
       axios.get("https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
         .then(response => {
-          let myTarget1 = JSON.parse(JSON.stringify(response.data))
-          this.coinList = myTarget1
+          let myTarget = JSON.parse(JSON.stringify(response.data))
+          this.coinList = myTarget
         });
 
-    }
-    const getIcons = () => {
-      axios.get("https://rest.coinapi.io/v1/assets/icons/{}/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
-        .then(response => {
-          let myTarget2 = JSON.parse(JSON.stringify(response.data))
-         console.log(myTarget2)
-        });
     }
 
     getCoins()
-    setTimeout(getIcons(), 300)
+
+
 
   },
   components: { CoinCard }
