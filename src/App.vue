@@ -12,11 +12,11 @@
           class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input">
       </form>
       <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
-        <template v-for="coin in this.coinList.slice(0, 6)">
+        <template v-for="coin in this.coinList.slice(0, 10)">
           <CoinCard :key="coin.asset_id" :coin="coin" v-if="isNaN(parseFloat(coin.price_usd).toFixed(4)) == false" />
         </template>
-        <template v-if="newCoins.value > 0">
-          <li v-for="coin in newCoins.value" :key="coin.name" >{{coin.name}}</li>
+        <template v-if="newCoins.length > 0">
+           <CoinCard v-for="coin in newCoins" :key="coin.name" :coin="coin" />
         </template>
       </ul>
     </main>
@@ -41,9 +41,8 @@ export default {
       coinList.value.forEach(element => {
         if (element.name == input.value) {
           newCoins.value.push(element)
-          console.log(newCoins.value)
+          console.log(newCoins.value.length)
         }
-
       })
     }
 
