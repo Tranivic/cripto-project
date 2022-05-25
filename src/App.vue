@@ -16,7 +16,7 @@
           <CoinCard :key="coin.asset_id" :coin="coin" v-if="isNaN(parseFloat(coin.price_usd).toFixed(4)) == false" />
         </template>
         <template v-if="newCoins.length > 0">
-           <CoinCard v-for="coin in newCoins" :key="coin.name" :coin="coin" />
+          <CoinCard v-for="coin in newCoins" :key="coin.name" :coin="coin" />
         </template>
       </ul>
     </main>
@@ -38,20 +38,28 @@ export default {
     const newCoins = ref([])
 
     const AddCoin = () => {
+      let obj = {}
+
       coinList.value.forEach(element => {
-        if (element.name == input.value) {
+        if (element.name == input.value || element.asset_id == input.value) {
           newCoins.value.push(element)
-          console.log(newCoins.value.length)
+          obj = element
         }
       })
+      if (obj.name == undefined) {
+        alert("Moeda Invalida")
+      }
     }
-
     return {
       AddCoin,
       input,
       newCoins,
-      coinList
+      coinList,
     }
+  },
+
+  computed() {
+
   },
 
   mounted() {
@@ -60,12 +68,15 @@ export default {
         .then(response => {
           let myTarget = JSON.parse(JSON.stringify(response.data))
           this.coinList = myTarget
+          this.coinList.forEach(element => {
+            if (element.id_icon != undefined) {
+              element.id_icon = element.id_icon.replace(/-/g, "")
+            }
+          })
         });
-
     }
 
     getCoins()
-
 
 
   },
