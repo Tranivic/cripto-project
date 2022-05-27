@@ -41,7 +41,7 @@ export default {
       let obj = {}
 
       coinList.value.forEach(element => {
-        if (element.name == input.value || element.asset_id == input.value) {
+        if (element.name.toUpperCase() == input.value.toUpperCase() || element.asset_id == input.value.toUpperCase()) {
           newCoins.value.push(element)
           obj = element
         }
