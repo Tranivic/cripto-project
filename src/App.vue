@@ -11,6 +11,9 @@
         <input placeholder="Search for currency to add..."
           class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input">
       </form>
+      <div class="notFindMsg flex justify-center">
+        <h1 v-show="this.hide == true" class="max-w-2xl w-3/5 text-red-500">Coin not found...</h1>
+      </div>
       <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
         <template v-for="coin in this.coinList.slice(0, 10)">
           <CoinCard :key="coin.asset_id" :coin="coin" v-if="isNaN(parseFloat(coin.price_usd).toFixed(4)) == false" />
@@ -33,9 +36,10 @@ export default {
   name: "App",
 
   setup() {
-    const coinList = ref([])
-    const input = ref("")
-    const newCoins = ref([])
+    const coinList = ref([]);
+    const input = ref("");
+    const newCoins = ref([]);
+    const hide = ref(false);
 
     const AddCoin = () => {
       let obj = {}
@@ -47,19 +51,18 @@ export default {
         }
       })
       if (obj.name == undefined) {
-        alert("Moeda Invalida")
+        hide.value = true
+      } else {
+        hide.value = false
       }
     }
     return {
       AddCoin,
       input,
+      hide,
       newCoins,
       coinList,
     }
-  },
-
-  computed() {
-
   },
 
   mounted() {
