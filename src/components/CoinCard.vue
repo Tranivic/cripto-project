@@ -7,7 +7,7 @@
             <h2 class="pl-2 text-stone-400">{{ coin.asset_id }}</h2>
         </div>
         <div class="card-content flex justify-center text-center">
-            <h1 class="text-2xl">${{ parseFloat(coin.price_usd).toFixed(4) }}</h1>
+            <h1 class="text-2xl">${{ parseFloat(coin.price_usd).toFixed(2) }}</h1>
         </div>
     </li>
 </template>
