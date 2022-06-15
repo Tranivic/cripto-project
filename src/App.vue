@@ -15,9 +15,6 @@
         <h1 v-show="this.hide == true" class="max-w-2xl w-3/5 text-red-500">Coin not found...</h1>
       </div>
       <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
-        <template v-for="coin in this.coinList.slice(0, 10)">
-          <CoinCard :key="coin.asset_id" :coin="coin" v-if="isNaN(parseFloat(coin.price_usd).toFixed(4)) == false" />
-        </template>
         <template v-if="newCoins.length > 0">
           <CoinCard v-for="coin in newCoins" :key="coin.name" :coin="coin" />
         </template>
@@ -37,8 +34,8 @@ export default {
 
   setup() {
     const coinList = ref([]);
-    const input = ref("");
     const newCoins = ref([]);
+    const input = ref("");
     const hide = ref(false);
 
     const AddCoin = () => {
@@ -75,10 +72,13 @@ export default {
             if (element.id_icon != undefined) {
               element.id_icon = element.id_icon.replace(/-/g, "")
             }
+            //First itens of the list to display on screen
+            if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "Rotharium") {
+              this.newCoins.push(element)
+            }
           })
         });
     }
-
     getCoins()
 
 
