@@ -7,15 +7,17 @@
     </header>
     <!-- ========== Main ========== -->
     <main>
-      <form class="pt-10 justify-center flex search-bar h-full" @submit.prevent="AddCoin">
+      <form class="pt-10 flex search-bar h-full flex-col text-center items-center" @submit.prevent="AddCoin">
         <input placeholder="Search for currency to add..."
-          class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input">
+          class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input"
+          v-on:input="showDrop">
+        <DropDown v-show="input.length" :drop-list="dropList" />
       </form>
       <div class="notFindMsg flex justify-center">
         <h1 v-show="this.hide == true" class="max-w-2xl w-3/5 text-red-500">Coin not found...</h1>
       </div>
       <ul class="justify-center cards-container gap-10 grid py-20 container mx-auto">
-        <template v-if="newCoins.length > 0">
+        <template v-if="newCoins.length">
           <CoinCard v-for="coin in newCoins" :key="coin.name" :coin="coin" />
         </template>
       </ul>
@@ -26,15 +28,21 @@
 
 <script>
 import { ref } from "vue";
-import axios from 'axios'
+import axios from 'axios';
 import CoinCard from "./components/CoinCard.vue";
+import DropDown from "./components/DropDown.vue";
 
 export default {
   name: "App",
-
+  data() {
+    return {
+      yourCurrency: "USD",
+    };
+  },
   setup() {
     const coinList = ref([]);
     const newCoins = ref([]);
+    const dropList = ref([]);
     const input = ref("");
     const hide = ref(false);
 
@@ -52,15 +60,30 @@ export default {
       } else {
         hide.value = false
       }
+    };
+    const showDrop = () => {
+
+      var inp = input.value.toUpperCase()
+      dropList.value = []
+
+      coinList.value.forEach(element => {
+        if (element.name.toUpperCase().startsWith(inp)) {
+          dropList.value.push(element)
+          console.log(dropList)
+        }
+      })
     }
     return {
       AddCoin,
+      showDrop,
+      dropList,
       input,
       hide,
       newCoins,
       coinList,
     }
   },
+
 
   mounted() {
     const getCoins = () => {
@@ -83,7 +106,7 @@ export default {
 
 
   },
-  components: { CoinCard }
+  components: { CoinCard, DropDown }
 }
 
 </script>
@@ -110,7 +133,8 @@ input {
 input:focus,
 input:valid {
   color: #fff;
-  background-color: #313131;
+  background-color: rgb(41 37 36);
+  outline: none !important;
 }
 
 .cards-container {

@@ -37,7 +37,7 @@ img{
 .coin-card:hover {
     cursor: pointer;
     color: #fff;
-    background-color: #313131;
+    background-color: rgb(41 37 36);
     transform: scale(110%);
 }
 </style>
