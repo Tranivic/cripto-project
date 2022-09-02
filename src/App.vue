@@ -31,9 +31,9 @@
 
 <script>
 import { ref } from "vue";
-import axios from 'axios';
 import CoinCard from "./components/CoinCard.vue";
 import DropDown from "./components/DropDown.vue";
+import json from './database/rest.coinapi.io.json'
 
 export default {
   name: "App",
@@ -44,6 +44,7 @@ export default {
   },
   setup() {
     const coinList = ref([]);
+    const formatedCoins = ref([]);
     const newCoins = ref([]);
     const dropList = ref([]);
     const input = ref("");
@@ -70,7 +71,7 @@ export default {
     const showDrop = () => {
       dropList.value = []
 
-      if (input.value.length > 2) {
+      if (input.value.length > 0) {
         var inp = input.value.toUpperCase()
         coinList.value.forEach(element => {
           if (element.name.toUpperCase().startsWith(inp)) {
@@ -78,7 +79,6 @@ export default {
           }
         })
       }
-
     }
 
     return {
@@ -89,33 +89,32 @@ export default {
       hide,
       newCoins,
       coinList,
+      formatedCoins,
     }
   },
 
 
   mounted() {
-    
+
     const getCoins = () => {
-      axios.get("https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
-        .then(response => {
-          let myTarget = JSON.parse(JSON.stringify(response.data))
-          this.coinList = myTarget
-          this.coinList.forEach(element => {
-            if (element.id_icon != undefined) {
-              element.id_icon = element.id_icon.replace(/-/g, "")
-            }
-            //First itens of the list to display on screen
-            if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "DogeCoin") {
-              this.newCoins.push(element)
-            }
-          })
-        });
-    }
+      this.coinList = json
+      this.coinList.forEach((element) => {
+        if (element.id_icon && element.price_usd) {
+          element.id_icon = element.id_icon.replace(/-/g, "")
+          this.formatedCoins.push(element)
+        }
+        //First itens of the list to display on screen
+        if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "BitCoen") {
+          this.newCoins.push(element)
+        }
+      })
+      this.coinList = this.formatedCoins
+      this.formatedCoins = []
+      console.log(this.coinList)
+    };
+
 
     getCoins()
-
-
-
   },
   components: { CoinCard, DropDown }
 }
