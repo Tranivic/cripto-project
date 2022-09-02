@@ -11,7 +11,10 @@
         <input placeholder="Search for currency to add..."
           class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input"
           v-on:input="showDrop">
-        <DropDown v-show="input.length" :drop-list="dropList" />
+        <ul v-show="dropList.length"
+          class="drop-list bg-stone-800 text-white shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg rounded-t-none text-left">
+          <DropDown v-for="drop in dropList" :key="drop.name" :drop="drop" />
+        </ul>
       </form>
       <div class="notFindMsg flex justify-center">
         <h1 v-show="this.hide == true" class="max-w-2xl w-3/5 text-red-500">Coin not found...</h1>
@@ -53,6 +56,8 @@ export default {
         if (element.name.toUpperCase() == input.value.toUpperCase() || element.asset_id == input.value.toUpperCase()) {
           newCoins.value.push(element)
           obj = element
+          input.value = ""
+          dropList.value = []
         }
       })
       if (obj.name == undefined) {
@@ -61,18 +66,21 @@ export default {
         hide.value = false
       }
     };
-    const showDrop = () => {
 
-      var inp = input.value.toUpperCase()
+    const showDrop = () => {
       dropList.value = []
 
-      coinList.value.forEach(element => {
-        if (element.name.toUpperCase().startsWith(inp)) {
-          dropList.value.push(element)
-          console.log(dropList)
-        }
-      })
+      if (input.value.length > 2) {
+        var inp = input.value.toUpperCase()
+        coinList.value.forEach(element => {
+          if (element.name.toUpperCase().startsWith(inp)) {
+            dropList.value.push(element)
+          }
+        })
+      }
+
     }
+
     return {
       AddCoin,
       showDrop,
@@ -86,6 +94,7 @@ export default {
 
 
   mounted() {
+    
     const getCoins = () => {
       axios.get("https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
         .then(response => {
@@ -96,13 +105,15 @@ export default {
               element.id_icon = element.id_icon.replace(/-/g, "")
             }
             //First itens of the list to display on screen
-            if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "Rotharium") {
+            if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "DogeCoin") {
               this.newCoins.push(element)
             }
           })
         });
     }
+
     getCoins()
+
 
 
   },
