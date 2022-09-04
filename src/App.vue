@@ -12,8 +12,8 @@
           class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input"
           v-on:input="showDrop">
         <ul v-show="dropList.length"
-          class="drop-list bg-stone-800 text-white shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg rounded-t-none text-left">
-          <DropDown v-for="drop in dropList" :key="drop.name" :drop="drop" />
+          class="drop-list bg-stone-800 text-white shadow-lg max-w-2xl w-3/5 rounded-lg rounded-t-none text-left">
+          <DropDown v-for="drop in dropList" :key="drop.asset_id" :drop="drop" />
         </ul>
       </form>
       <div class="notFindMsg flex justify-center">
@@ -26,7 +26,7 @@
       </ul>
     </main>
   </div>
-
+  <!-- Api para consultar BRL - http://economia.awesomeapi.com.br/json/last/USD-BRL -->
 </template>
 
 <script>
@@ -44,42 +44,51 @@ export default {
   },
   setup() {
     const coinList = ref([]);
-    const formatedCoins = ref([]);
     const newCoins = ref([]);
     const dropList = ref([]);
     const input = ref("");
     const hide = ref(false);
 
-    const AddCoin = () => {
-      let obj = {}
-
-      coinList.value.forEach(element => {
-        if (element.name.toUpperCase() == input.value.toUpperCase() || element.asset_id == input.value.toUpperCase()) {
-          newCoins.value.push(element)
-          obj = element
-          input.value = ""
-          dropList.value = []
+    const pushNewCoin = (o, e) => {
+      if (e.name.toUpperCase() == input.value.toUpperCase() || e.asset_id == input.value.toUpperCase()) {
+        newCoins.value.push(e)
+        o = e
+        dropList.value = []
+        input.value = ""
+        if (o.name == undefined) {
+          hide.value = true
+        } else {
+          hide.value = false
         }
-      })
-      if (obj.name == undefined) {
-        hide.value = true
-      } else {
-        hide.value = false
       }
+
     };
 
+    const AddCoin = () => {
+      let obj = {}
+      if (dropList.value.length === 1) {
+        input.value = dropList.value[0].name
+      }
+      coinList.value.forEach(element => {
+        pushNewCoin(obj, element)
+      })
+    };
+
+//Function to autocomplete input bar
     const showDrop = () => {
+      var inp = input.value.toUpperCase()
       dropList.value = []
 
-      if (input.value.length > 0) {
-        var inp = input.value.toUpperCase()
+      if (input.value.length > 2){
+        dropList.value = []
         coinList.value.forEach(element => {
           if (element.name.toUpperCase().startsWith(inp)) {
             dropList.value.push(element)
           }
-        })
+        });
       }
-    }
+
+    };
 
     return {
       AddCoin,
@@ -89,31 +98,27 @@ export default {
       hide,
       newCoins,
       coinList,
-      formatedCoins,
     }
   },
 
 
   mounted() {
-
+    //Function to get coins from the api database
     const getCoins = () => {
+      let formatedCoins = []
       this.coinList = json
       this.coinList.forEach((element) => {
         if (element.id_icon && element.price_usd) {
           element.id_icon = element.id_icon.replace(/-/g, "")
-          this.formatedCoins.push(element)
+          formatedCoins.push(element)
         }
         //First itens of the list to display on screen
         if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "BitCoen") {
           this.newCoins.push(element)
         }
       })
-      this.coinList = this.formatedCoins
-      this.formatedCoins = []
-      console.log(this.coinList)
+      this.coinList = formatedCoins
     };
-
-
     getCoins()
   },
   components: { CoinCard, DropDown }
