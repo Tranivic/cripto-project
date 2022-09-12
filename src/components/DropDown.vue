@@ -1,40 +1,38 @@
 <template >
-    <li class="drop-item cursor-default h-full rounded-md pl-5 pt-1" @mouseover="isHovering = true" @mouseout="isHovering = false"
-        :class="{hovering: isHovering}" @click="passDrop(drop.name)">{{ drop.name }}</li>
+    <li class="drop-item cursor-default h-full rounded-lg pl-5 pt-1" @mouseover="isHovering = true"
+        @mouseout="isHovering = false" :class="{hovering: isHovering}" @click="passDrop(drop)">{{ drop.name }}</li>
 </template>
 
 <script>
 export default {
-    props: [
-        'drop', 'newCoins'
-    ],
+    nCoins: { type: Array, required: true },
+    props: ['drop'],
+    
     data() {
         return {
             isHovering: false,
+            coinClicked: {},
         }
     },
     
 
     methods: {
+
     toggleBgVisibility() {
-      this.bgIsVisible = !this.bgIsVisible;
-      console.log(this.bgIsVisible)
-        },
+        this.bgIsVisible = !this.bgIsVisible;
+        console.log(this.bgIsVisible)
     },
-    setup (){
-        // Function to push the coin on click
-        const passDrop = (dropName) => {
-            console.log(dropName)
-        }
-        return {
-            passDrop,
-        };
+   
+    // Function to push the coin on click
+    passDrop(dropSelected)  {
+        this.$emit('drop-clicked', dropSelected);
+    },
+
     },
 }
 </script>
 
 <style>
-
 .drop-list {
     margin-top: -.4rem;
 }

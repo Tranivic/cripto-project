@@ -13,7 +13,7 @@
           v-on:input="showDrop">
         <ul v-show="dropList.length"
           class="drop-list bg-stone-800 text-white shadow-lg max-w-2xl w-3/5 rounded-lg rounded-t-none text-left">
-          <DropDown v-for="drop in dropList" :key="drop.asset_id" :drop="drop" />
+          <DropDown v-for="drop in dropList" :key="drop.asset_id" :drop="drop" @drop-clicked="dropClicked" />
         </ul>
       </form>
       <div class="notFindMsg flex justify-center">
@@ -49,6 +49,7 @@ export default {
     const input = ref("");
     const hide = ref(false);
 
+    // Function to push coin to array list
     const pushNewCoin = (o, e) => {
       if (e.name.toUpperCase() == input.value.toUpperCase() || e.asset_id == input.value.toUpperCase()) {
         newCoins.value.push(e)
@@ -63,7 +64,7 @@ export default {
       }
 
     };
-
+    // Fuction to add coin
     const AddCoin = () => {
       let obj = {}
       if (dropList.value.length === 1) {
@@ -74,12 +75,12 @@ export default {
       })
     };
 
-//Function to autocomplete input bar
+    //Function to show autocomplete list
     const showDrop = () => {
       var inp = input.value.toUpperCase()
       dropList.value = []
 
-      if (input.value.length > 2){
+      if (input.value.length > 2) {
         dropList.value = []
         coinList.value.forEach(element => {
           if (element.name.toUpperCase().startsWith(inp)) {
@@ -90,9 +91,17 @@ export default {
 
     };
 
+    // Function to push coin to array when autocomplete item is clicked
+    const dropClicked = (dropSelected) => {
+      input.value = dropSelected.name
+      dropList.value = []
+    };
+
+
     return {
       AddCoin,
       showDrop,
+      dropClicked,
       dropList,
       input,
       hide,
