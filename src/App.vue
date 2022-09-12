@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import CoinCard from "./components/CoinCard.vue";
 import DropDown from "./components/DropDown.vue";
 import json from './database/rest.coinapi.io.json'
@@ -45,14 +45,41 @@ export default {
   setup() {
     const coinList = ref([]);
     const newCoins = ref([]);
+    const pushedCoins = ref([]);
     const dropList = ref([]);
     const input = ref("");
     const hide = ref(false);
 
+    //Function to get coins list from api database
+    const getCoins = () => {
+      let formatedCoins = [];
+      coinList.value = json;
+      coinList.value.forEach((element) => {
+        if (element.id_icon && element.price_usd) {
+          element.id_icon = element.id_icon.replace(/-/g, "");
+          formatedCoins.push(element);
+        }
+      })
+      coinList.value = formatedCoins;
+    }
+
+    //Function att coins prices every 5 minutes
+    const attPrices = () => {
+      getCoins();
+      let obj = {};
+      if (newCoins.value.length > 0) {
+        newCoins.value.forEach((element) => {
+          pushNewCoin(obj, element)
+        });
+        console.log("Atualizei");
+      }
+    };
+    setInterval(attPrices, 5000);
     // Function to push coin to array list
     const pushNewCoin = (o, e) => {
       if (e.name.toUpperCase() == input.value.toUpperCase() || e.asset_id == input.value.toUpperCase()) {
         newCoins.value.push(e)
+        pushedCoins.value.push(e)
         o = e
         dropList.value = []
         input.value = ""
@@ -88,7 +115,6 @@ export default {
           }
         });
       }
-
     };
 
     // Function to push coin to array when autocomplete item is clicked
@@ -98,41 +124,27 @@ export default {
       addCoin()
     };
 
+    onMounted(() => {
+      getCoins();
+    });
 
     return {
       addCoin,
       showDrop,
       dropClicked,
+      getCoins,
+      attPrices,
       dropList,
       input,
       hide,
       newCoins,
+      pushedCoins,
       coinList,
     }
   },
 
 
-  mounted() {
 
-    //Function to get coins from the api database
-    const getCoins = () => {
-      let formatedCoins = []
-      this.coinList = json
-      this.coinList.forEach((element) => {
-        if (element.id_icon && element.price_usd) {
-          element.id_icon = element.id_icon.replace(/-/g, "")
-          formatedCoins.push(element)
-        }
-        //First itens of the list to display on screen
-        if (element.name === "Bitcoin" || element.name === "Ethereum" || element.name === "Ethereum Classic" || element.name === "BitCoen") {
-          this.newCoins.push(element)
-        }
-      })
-      this.coinList = formatedCoins
-    };
-
-    getCoins();
-  },
   components: { CoinCard, DropDown }
 }
 
