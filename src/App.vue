@@ -7,10 +7,10 @@
     </header>
     <!-- ========== Main ========== -->
     <main>
-      <form class="pt-10 flex search-bar h-full flex-col text-center items-center" @submit.prevent="AddCoin">
+      <form class="pt-10 flex search-bar h-full flex-col text-center items-center" @submit.prevent="addCoin">
         <input placeholder="Search for currency to add..."
           class="bg-zinc-100 shadow-lg max-w-2xl w-3/5 py-3 pl-5 rounded-lg" type="search" required v-model="input"
-          v-on:input="showDrop">
+          @input="showDrop">
         <ul v-show="dropList.length"
           class="drop-list bg-stone-800 text-white shadow-lg max-w-2xl w-3/5 rounded-lg rounded-t-none text-left">
           <DropDown v-for="drop in dropList" :key="drop.asset_id" :drop="drop" @drop-clicked="dropClicked" />
@@ -65,7 +65,7 @@ export default {
 
     };
     // Fuction to add coin
-    const AddCoin = () => {
+    const addCoin = () => {
       let obj = {}
       if (dropList.value.length === 1) {
         input.value = dropList.value[0].name
@@ -80,7 +80,7 @@ export default {
       var inp = input.value.toUpperCase()
       dropList.value = []
 
-      if (input.value.length > 2) {
+      if (input.value.length > 1) {
         dropList.value = []
         coinList.value.forEach(element => {
           if (element.name.toUpperCase().startsWith(inp)) {
@@ -95,11 +95,12 @@ export default {
     const dropClicked = (dropSelected) => {
       input.value = dropSelected.name
       dropList.value = []
+      addCoin()
     };
 
 
     return {
-      AddCoin,
+      addCoin,
       showDrop,
       dropClicked,
       dropList,
@@ -112,6 +113,7 @@ export default {
 
 
   mounted() {
+
     //Function to get coins from the api database
     const getCoins = () => {
       let formatedCoins = []
@@ -128,7 +130,8 @@ export default {
       })
       this.coinList = formatedCoins
     };
-    getCoins()
+
+    getCoins();
   },
   components: { CoinCard, DropDown }
 }
