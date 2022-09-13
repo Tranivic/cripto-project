@@ -33,7 +33,7 @@
 import { ref, onMounted } from "vue";
 import CoinCard from "./components/CoinCard.vue";
 import DropDown from "./components/DropDown.vue";
-import json from './database/rest.coinapi.io.json'
+import axios from 'axios';
 
 export default {
   name: "App",
@@ -50,15 +50,19 @@ export default {
     const input = ref("");
     const hide = ref(false);
 
-    //Function to get coins list from api database
     const getCoins = () => {
       let formatedCoins = [];
-      coinList.value = json;
-      coinList.value.forEach((element) => {
-        if (element.id_icon && element.price_usd) {
-          formatedCoins.push(element);
-        }
-      })
+      axios.get("https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
+        .then(response => {
+          let myTarget = JSON.parse(JSON.stringify(response.data))
+          coinList.value = myTarget
+          console.log(coinList.value)
+          coinList.value.forEach(element => {
+            if (element.id_icon && element.price_usd) {
+              formatedCoins.push(element);
+            }
+          })
+        });
       coinList.value = formatedCoins;
     }
     //Function to formated coins array pulled from api database
@@ -74,14 +78,15 @@ export default {
 
     //Function att coins prices every 5 minutes
     const attPrices = () => {
-      getCoins();
-      let obj = {};
-      if (newCoins.value.length > 0) {
-        newCoins.value.forEach((element) => {
-          pushNewCoin(obj, element)
-        });
-        console.log("Atualizei");
-      }
+      // getCoins();
+      // let obj = {};
+      // if (newCoins.value.length > 0) {
+      //   newCoins.value.forEach((element) => {
+      //     pushNewCoin(obj, element)
+      //   });
+      //   console.log("Atualizei");
+      // }
+      console.log("resource testing")
     };
     setInterval(attPrices, 5000);
     // Function to push coin to array list
