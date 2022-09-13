@@ -2,8 +2,8 @@
 
   <div class="app">
     <!-- ========== Header ========== -->
-    <header class="font-black text-6xl text-stone-400 pt-20 justify-center flex">
-      <h1>THE<strong class="text-stone-800">COIN</strong>APP</h1>
+    <header class="font-black md:text-6xl sm:text-5xl text-stone-400 pt-20 justify-center flex">
+      <h1>THE<strong class="text-stone-800">CRIPTO</strong>DATA</h1>
     </header>
     <!-- ========== Main ========== -->
     <main>
@@ -56,11 +56,20 @@ export default {
       coinList.value = json;
       coinList.value.forEach((element) => {
         if (element.id_icon && element.price_usd) {
-          element.id_icon = element.id_icon.replace(/-/g, "");
           formatedCoins.push(element);
         }
       })
       coinList.value = formatedCoins;
+    }
+    //Function to formated coins array pulled from api database
+    const formatCoins = () => {
+      coinList.value.sort(function (a, b) {
+        return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+      });
+      coinList.value.forEach((element) => {
+        element.name = element.name.replace(/\s/g, '');
+        element.name[0].toUpperCase() + element.name.slice(1).toLowerCase();
+      });
     }
 
     //Function att coins prices every 5 minutes
@@ -126,6 +135,7 @@ export default {
 
     onMounted(() => {
       getCoins();
+      formatCoins();
     });
 
     return {
@@ -134,6 +144,7 @@ export default {
       dropClicked,
       getCoins,
       attPrices,
+      formatCoins,
       dropList,
       input,
       hide,
