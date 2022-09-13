@@ -62,8 +62,8 @@ export default {
               formatedCoins.push(element);
             }
           })
+          coinList.value = formatedCoins;
         });
-      coinList.value = formatedCoins;
     }
     //Function to formated coins array pulled from api database
     const formatCoins = () => {
