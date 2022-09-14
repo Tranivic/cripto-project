@@ -52,7 +52,7 @@ export default {
 
     const getCoins = () => {
       let formatedCoins = [];
-      axios.get("https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B")
+      axios.get(`https://rest.coinapi.io/v1/assets/?apikey=${process.env.VUE_APP_API_KEY}`)
         .then(response => {
           let myTarget = JSON.parse(JSON.stringify(response.data))
           coinList.value = myTarget
