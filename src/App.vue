@@ -70,6 +70,7 @@ export default {
       });
       coinList.value.forEach((element) => {
         element.name[0].toUpperCase() + element.name.slice(1).toLowerCase();
+        element.id_icon = element.id_icon.replace(/-/g, "");
       });
     }
 
@@ -90,38 +91,38 @@ export default {
       let counter = 0
       coinList.value.forEach(element => {
         if (element.name.toUpperCase() == input.value.toUpperCase() || element.asset_id == input.value.toUpperCase()) {
-          counter = counter + 1
-          newCoins.value.push(element)
-          dropList.value = []
+          counter = counter + 1;
+          newCoins.value.push(element);
+          dropList.value = [];
         }
       })
       if (counter == 0) {
-        hide.value = true
-        counter = 0
+        hide.value = true;
+        counter = 0;
       } else {
-        hide.value = false
-        counter = 0
+        hide.value = false;
+        counter = 0;
       }
     };
 
     // Fuction to add coin
     const addCoin = () => {
       if (dropList.value.length === 1) {
-        input.value = dropList.value[0].name
+        input.value = dropList.value[0].name;
       }
       pushNewCoin();
     };
 
     //Function to show autocomplete list
     const showDrop = () => {
-      var inp = input.value.toUpperCase()
-      dropList.value = []
+      var inp = input.value.toUpperCase();
+      dropList.value = [];
 
       if (input.value.length > 1) {
-        dropList.value = []
+        dropList.value = [];
         coinList.value.forEach(element => {
           if (element.name.toUpperCase().startsWith(inp)) {
-            dropList.value.push(element)
+            dropList.value.push(element);
           }
         });
       }
@@ -129,9 +130,9 @@ export default {
 
     // Function to push coin to array when autocomplete item is clicked
     const dropClicked = (dropSelected) => {
-      input.value = dropSelected.name
-      dropList.value = []
-      addCoin()
+      input.value = dropSelected.name;
+      dropList.value = [];
+      addCoin();
     };
 
     onMounted(() => {
