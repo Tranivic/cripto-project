@@ -111,6 +111,7 @@ export default {
         input.value = dropList.value[0].name;
       }
       pushNewCoin();
+      input.value = "";
     };
 
     //Function to show autocomplete list
