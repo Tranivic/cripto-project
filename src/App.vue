@@ -45,7 +45,6 @@ export default {
   setup() {
     const coinList = ref([]);
     const newCoins = ref([]);
-    const pushedCoins = ref([]);
     const dropList = ref([]);
     const input = ref("");
     const hide = ref(false);
@@ -55,14 +54,13 @@ export default {
       axios.get(`https://rest.coinapi.io/v1/assets/?apikey=836C99F4-29ED-4AFC-AB22-A4DB3678C94B`)
         .then(response => {
           let myTarget = JSON.parse(JSON.stringify(response.data))
-          coinList.value = myTarget
-          console.log(coinList.value)
-          coinList.value.forEach(element => {
+          myTarget.forEach(element => {
             if (element.id_icon && element.price_usd) {
               formatedCoins.push(element);
             }
           })
           coinList.value = formatedCoins;
+          formatCoins();
         });
     }
     //Function to formated coins array pulled from api database
@@ -71,7 +69,6 @@ export default {
         return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
       });
       coinList.value.forEach((element) => {
-        element.name = element.name.replace(/\s/g, '');
         element.name[0].toUpperCase() + element.name.slice(1).toLowerCase();
       });
     }
@@ -86,34 +83,33 @@ export default {
       //   });
       //   console.log("Atualizei");
       // }
-      console.log("resource testing")
     };
     setInterval(attPrices, 5000);
     // Function to push coin to array list
-    const pushNewCoin = (o, e) => {
-      if (e.name.toUpperCase() == input.value.toUpperCase() || e.asset_id == input.value.toUpperCase()) {
-        newCoins.value.push(e)
-        pushedCoins.value.push(e)
-        o = e
-        dropList.value = []
-        input.value = ""
-        if (o.name == undefined) {
-          hide.value = true
-        } else {
-          hide.value = false
+    const pushNewCoin = () => {
+      let counter = 0
+      coinList.value.forEach(element => {
+        if (element.name.toUpperCase() == input.value.toUpperCase() || element.asset_id == input.value.toUpperCase()) {
+          counter = counter + 1
+          newCoins.value.push(element)
+          dropList.value = []
         }
+      })
+      if (counter == 0) {
+        hide.value = true
+        counter = 0
+      } else {
+        hide.value = false
+        counter = 0
       }
-
     };
+
     // Fuction to add coin
     const addCoin = () => {
-      let obj = {}
       if (dropList.value.length === 1) {
         input.value = dropList.value[0].name
       }
-      coinList.value.forEach(element => {
-        pushNewCoin(obj, element)
-      })
+      pushNewCoin();
     };
 
     //Function to show autocomplete list
@@ -154,7 +150,6 @@ export default {
       input,
       hide,
       newCoins,
-      pushedCoins,
       coinList,
     }
   },
